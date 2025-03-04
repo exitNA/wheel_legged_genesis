@@ -1,8 +1,8 @@
 # wheel_legged_genesis
 Reinforcement learning of wheel-legged robots based on Genesis 
-![combined_image](https://github.com/user-attachments/assets/d4737ab4-43e5-49a3-aee9-a40272bde377)   
+![combined_image](picture/combined_image.jpg)   
 sim2sim in mujoco  
-![combined_image2](https://github.com/user-attachments/assets/06a84dc1-d27f-4ffd-8b22-510114bff55a)  
+![combined_image2](picture/combined_image2.jpg)  
 ## System Requirements  
 Ubuntu 20.04/22.04/24.04  
 python >= 3.10
