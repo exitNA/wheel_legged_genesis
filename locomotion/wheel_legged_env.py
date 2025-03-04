@@ -148,8 +148,10 @@ class WheelLeggedEnv:
         self.robot.set_dofs_kv(self.kd, self.motor_dofs)
         
         
-        damping = np.full((self.num_envs,self.robot.n_dofs), self.env_cfg["damping"])
+        damping = np.full((self.num_envs,self.robot.n_dofs), self.env_cfg["joint_damping"])
         damping[:,:6] = 0
+        damping[:,self.motor_dofs[5]] = self.env_cfg["wheel_damping"]
+        damping[:,self.motor_dofs[4]] = self.env_cfg["wheel_damping"]
         self.robot.set_dofs_damping(damping=damping, 
                                    dofs_idx_local=np.arange(0,self.robot.n_dofs)
                                    )
@@ -519,8 +521,10 @@ class WheelLeggedEnv:
         dof_pos_shift = self.joint_angle_low + self.joint_angle_range * torch.rand(len(envs_idx),self.num_actions,device=self.device,dtype=gs.tc_float)
         self.default_dof_pos[envs_idx] = dof_pos_shift + self.basic_default_dof_pos
 
-        damping = (self.dof_damping_low+self.dof_damping_range * torch.rand(len(envs_idx), self.robot.n_dofs)) * self.env_cfg["damping"]
+        damping = (self.dof_damping_low+self.dof_damping_range * torch.rand(len(envs_idx), self.robot.n_dofs)) * self.env_cfg["joint_damping"]
         damping[:,:6] = 0
+        damping[:,self.motor_dofs[5]] = (self.dof_damping_low+self.dof_damping_range * torch.rand(len(envs_idx), )) * self.env_cfg["wheel_damping"]
+        damping[:,self.motor_dofs[4]] = (self.dof_damping_low+self.dof_damping_range * torch.rand(len(envs_idx), )) * self.env_cfg["wheel_damping"]
         self.robot.set_dofs_damping(damping=damping, 
                                    dofs_idx_local=np.arange(0, self.robot.n_dofs), 
                                    envs_idx=envs_idx)

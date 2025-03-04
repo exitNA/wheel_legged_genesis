@@ -143,7 +143,7 @@ def main():
             history_obs_buf[-1, :] = slice_obs_buf 
 
             # 更新动作
-            target_dof_pos = actions[0:4] * 0.05#env_cfg["joint_action_scale"] + default_dof_pos[0:4]
+            target_dof_pos = actions[0:4] * 0.07#env_cfg["joint_action_scale"] + default_dof_pos[0:4]
             target_dof_vel = actions[4:6] * 1.0#env_cfg["wheel_action_scale"]
             target_dof_pos = torch.clamp(target_dof_pos, dof_pos_lower[0:4],dof_pos_upper[0:4])
             # print("act:", act)
@@ -152,6 +152,11 @@ def main():
 
             d.ctrl[4] = target_dof_vel.detach().cpu().numpy()[0]
             d.ctrl[5] = target_dof_vel.detach().cpu().numpy()[1]
+            
+            #调试信息
+            joint_id = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_JOINT, "left_wheel_joint")
+            joint_torque = d.qfrc_actuator[joint_id]
+            print("joint_torque: ",joint_torque)
 
             # 获取控制命令
             commands, reset_flag = pad.get_commands()

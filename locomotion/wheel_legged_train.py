@@ -31,7 +31,7 @@ def get_train_cfg(exp_name, max_iterations):
             "activation": "elu",
             "actor_hidden_dims": [512, 256, 128, 64],
             "critic_hidden_dims": [256, 128, 64],
-            "init_noise_std": 4.0,
+            "init_noise_std": 3.0,
         },
         "runner": {
             "algorithm_class_name": "PPO",
@@ -98,17 +98,18 @@ def get_cfgs():
             # "right_hip_joint":23.6,
             "right_thigh_joint": 40.0,
             "right_calf_joint": 40.0,
-            "left_wheel_joint": 40.0,
-            "right_wheel_joint": 40.0,
+            "left_wheel_joint": 12.0,
+            "right_wheel_joint": 12.0,
         },
         # PD
         "joint_kp": 20.0,
-        "joint_kd": 0.5,
-        "wheel_kp": 15.0,
-        "wheel_kd": 0.3,
-        "damping": 2,
+        "joint_kd": 1.5,
+        "wheel_kp": 20.0,
+        "wheel_kd": 0.5,
+        "joint_damping": 2,
+        "wheel_damping": 1.0,
         "stiffness":1.5, #不包含轮
-        "armature":0.2,
+        "armature":0.0,
         # termination 角度制    obs的angv弧度制
         "termination_if_roll_greater_than": 20,  # degree
         "termination_if_pitch_greater_than": 20, #15度以内都摆烂，会导致episode太短难以学习
@@ -179,9 +180,9 @@ def get_cfgs():
     command_cfg = {
         "num_commands": 4,
         "base_range": 1.0,  #基础范围
-        "lin_vel_x_range": [-1.0, 1.0], #修改范围要调整奖励权重
+        "lin_vel_x_range": [-2.5, 2.5], #修改范围要调整奖励权重
         "lin_vel_y_range": [-0.0, 0.0],
-        "ang_vel_range": [-3.14, 3.14],   #修改范围要调整奖励权重
+        "ang_vel_range": [-6.28, 6.28],   #修改范围要调整奖励权重
         "height_target_range": [0.2 , 0.32],   #lower会导致跪地
     }
     # 课程学习，奖励循序渐进 待优化
@@ -189,8 +190,8 @@ def get_cfgs():
         "curriculum_lin_vel_step":0.0009,   #比例
         "curriculum_ang_vel_step":0.0003,   #比例
         # "curriculum_height_target_step":0.005,   #高度，先高再低，base_range表示[min+0.7height_range,max]
-        "curriculum_lin_vel_min_range":0.5,   #比例
-        "curriculum_ang_vel_min_range":0.15,   #比例
+        "curriculum_lin_vel_min_range":0.2,   #比例
+        "curriculum_ang_vel_min_range":0.07,   #比例
         "lin_vel_err_range":[0.15,0.20],  #课程误差阈值
         "ang_vel_err_range":[0.3,0.4],  #课程误差阈值 连续曲线>方波>不波动
     }
@@ -204,9 +205,9 @@ def get_cfgs():
         "random_KP":[0.9, 1.1], #比例
         "random_KD":[0.9, 1.1], #比例
         "random_default_joint_angles":[-0.05,0.05], #rad
-        "dof_damping_range":[0.8 , 1.2], #比例
-        "dof_stiffness_range":[0.8 , 1.2], #比例 
-        "dof_armature_range":[0.8 , 1.2], #比例 额外惯性 类似电机减速器惯性
+        "dof_damping_range":[0.5 , 1.5], #比例
+        "dof_stiffness_range":[0.5 , 1.5], #比例 
+        "dof_armature_range":[0.5 , 1.5], #比例 额外惯性 类似电机减速器惯性
     }
     #地形配置
     terrain_cfg = {
@@ -231,7 +232,7 @@ def main():
     parser.add_argument("--max_iterations", type=int, default=10000)
     args = parser.parse_args()
 
-    gs.init(logging_level="warning",backend=gs.gpu)
+    gs.init(logging_level="warning",backend=gs.vulkan)
     gs.device="cuda:0"
     log_dir = f"logs/{args.exp_name}"
     env_cfg, obs_cfg, reward_cfg, command_cfg, curriculum_cfg, domain_rand_cfg, terrain_cfg = get_cfgs()
