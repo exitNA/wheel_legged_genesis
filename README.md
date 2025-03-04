@@ -7,7 +7,7 @@ python >= 3.10
 ## Hardware requirements  
 NVIDIA/AMD GPU or CPU  
 ## must（必须）
-**Use the main branch of Genesis to install it locally, and you cannot use Genesis 0.2.1 Release**  
+**It is not possible to install the 0.2.1 version of genesis with pip, with the local installation of the main branch because there is an API update**  
 **不能使用pip安装genesis的0.2.1版本，使用main分支的本地安装，因为有API更新**  
 ## Test & Development Platform  
 1. i5 12400f +  Geforce RTX4070  
@@ -15,6 +15,8 @@ NVIDIA/AMD GPU or CPU
 ## Before running
 ### 1. Clone repo
 run:  
+***It is recommended to use the latest release version here, the main branch of clone is not necessarily stable***  
+***这里建议使用最新的release版，clone的main分支不一定稳定***   
 ```
 git clone https://github.com/Albusgive/wheel_legged_genesis.git
 cd wheel_legged_genesis
@@ -100,6 +102,7 @@ When using AMD GPUs, it is recommended to select vulkan for the genesis backend
 |v0.0.2|add domain rand and curriculum|
 |v0.0.3|Faster and more stable training than v0.0.2|
 |v0.0.5|Terrain training, custom terrain,add keyboard and better curriculum|
+|v0.0.7|sim2sim is a perfect victory over mujoco|
 ## TODO: 
 - [x] Rough roads:uphill and downhill slopes  
 - [x] Curriculum  

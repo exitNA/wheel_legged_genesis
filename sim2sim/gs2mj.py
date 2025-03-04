@@ -52,10 +52,8 @@ def get_obs(env_cfg, obs_scales, actions, default_dof_pos, commands=[0.0, 0.0, 0
     gravity = [0.0, 0.0, -1.0]
     projected_gravity = world2self(base_quat,torch.tensor(gravity, device=device, dtype=torch.float32))
     base_lin_vel = world2self(base_quat,get_sensor_data("base_lin_vel"))
+    base_lin_vel[1] = 0
     base_ang_vel = get_sensor_data("base_ang_vel")
-    print("base_lin_vel:", base_lin_vel)
-    print("base_ang_vel:", base_ang_vel)
-    print("commands:", commands)
     dof_pos = torch.zeros(env_cfg["num_actions"], device=device, dtype=torch.float32)
     for i, dof_name in enumerate(env_cfg["dof_names"]):
         dof_pos[i] = get_sensor_data(dof_name+"_p")[0]
@@ -67,6 +65,10 @@ def get_obs(env_cfg, obs_scales, actions, default_dof_pos, commands=[0.0, 0.0, 0
 
     cmds = torch.tensor(commands, device=device, dtype=torch.float32)
 
+    print("base_lin_vel:", base_lin_vel)
+    print("base_ang_vel:", base_ang_vel)
+    print("dof_vel:", dof_vel[4:6])
+    print("commands:", commands)
     return torch.cat(
         [
             base_lin_vel * obs_scales["lin_vel"],  # 3
@@ -98,7 +100,7 @@ def main():
         exit()
 
     # 加载游戏控制器
-    pad = gamepad.control_gamepad(command_cfg, [1.0, 1.0, 3.14, 0.05])
+    pad = gamepad.control_gamepad(command_cfg, [2.0, 1.0, 6.28, 0.05])
     commands, reset_flag = pad.get_commands()
 
     # 加载模型
@@ -153,10 +155,6 @@ def main():
             d.ctrl[4] = target_dof_vel.detach().cpu().numpy()[0]
             d.ctrl[5] = target_dof_vel.detach().cpu().numpy()[1]
             
-            #调试信息
-            joint_id = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_JOINT, "left_wheel_joint")
-            joint_torque = d.qfrc_actuator[joint_id]
-            print("joint_torque: ",joint_torque)
 
             # 获取控制命令
             commands, reset_flag = pad.get_commands()
