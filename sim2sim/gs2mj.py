@@ -13,16 +13,13 @@ import obs_save
 m = mujoco.MjModel.from_xml_path('./scence.xml')
 d = mujoco.MjData(m)
 
-utils_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'utils'))
-# 将 utils 文件夹路径添加到 sys.path
-sys.path.append(utils_path)
-# 导入 utils 中的 gamepad 模块
-import gamepad
-
-#储存观测状态
-obs_saver = obs_save.TensorTypeSaver(save_dir="./obs_data", device="cpu")
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(parent_dir)
+from utils import gamepad
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+#储存观测状态
+obs_saver = obs_save.TensorTypeSaver(save_dir="./obs_data", device="cpu")
 
 def get_sensor_data(sensor_name):
     sensor_id = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_SENSOR, sensor_name)
@@ -139,6 +136,7 @@ def main():
         [env_cfg["default_joint_angles"][name] for name in env_cfg["dof_names"]],
         device=device,
         dtype=torch.float32)
+
     # from IPython import embed; embed()
     # 从未上电姿态站立
     set_joint_angle("left_thigh_joint", -0.35)
@@ -154,7 +152,7 @@ def main():
                                     actions=actions, default_dof_pos=default_dof_pos, commands=commands)
             slice_obs_buf = slice_obs_buf.unsqueeze(0)
             obs_buf = torch.cat([history_obs_buf, slice_obs_buf], dim=0).view(-1)
-
+            
             # 更新历史缓冲区
             if obs_cfg["history_length"] > 1:
                 history_obs_buf[:-1, :] = history_obs_buf[1:, :].clone()  # 移位操作

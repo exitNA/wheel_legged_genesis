@@ -1,5 +1,6 @@
 import pygame
 import numpy as np
+from pathlib import Path
 class control_gamepad:
     def __init__(self,command_cfg,command_scale=None):
         pygame.init()
@@ -14,13 +15,21 @@ class control_gamepad:
             screen_width = 300
             screen_height = 480
             self.screen = pygame.display.set_mode((screen_width, screen_height))
-            image_path = "picture/keyboard_key.png"
+            image_path1 = "../picture/keyboard_key.png" #sim2sim
+            image_path2 = "picture/keyboard_key.png"
             image_center = (160, 240)
             pygame.display.set_caption("请用此窗口进行键盘控制(This use your keyboard)")
+            image_surface = pygame.Surface((800, 600), pygame.SRCALPHA)
+            image_surface.fill((255, 255, 255, 0))  # 透明初始化
             try:
-                image_surface = pygame.image.load(image_path)
+                if Path(image_path1).exists():
+                    image_surface = pygame.image.load(image_path1)
+                elif Path(image_path2).exists():
+                    image_surface = pygame.image.load(image_path2)
+                else:
+                    print(f"无法加载图片: picture/keyboard_key.png")
             except pygame.error as e:
-                print(f"无法加载图片: {image_path}")
+                print(f"无法加载图片: picture/keyboard_key.png")
                 print(e)
                 pygame.quit()
                 exit()
