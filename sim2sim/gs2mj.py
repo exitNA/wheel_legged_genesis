@@ -7,6 +7,7 @@ import time
 import argparse
 import pickle
 import numpy as np
+import obs_save
 
 # 加载 mujoco 模型
 m = mujoco.MjModel.from_xml_path('./scence.xml')
@@ -15,9 +16,11 @@ d = mujoco.MjData(m)
 utils_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'utils'))
 # 将 utils 文件夹路径添加到 sys.path
 sys.path.append(utils_path)
-
 # 导入 utils 中的 gamepad 模块
 import gamepad
+
+#储存观测状态
+obs_saver = obs_save.TensorTypeSaver(save_dir="./obs_data", device="cpu")
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -34,6 +37,10 @@ def get_sensor_data(sensor_name):
         dtype=torch.float32
     )
 
+def set_joint_angle(joint_name, angle):
+    joint_id = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_JOINT, joint_name)
+    d.qpos[m.jnt_qposadr[joint_id]] = angle
+    
 def world2self(quat, v):
     q_w = quat[0] 
     q_vec = quat[1:] 
@@ -52,7 +59,6 @@ def get_obs(env_cfg, obs_scales, actions, default_dof_pos, commands=[0.0, 0.0, 0
     gravity = [0.0, 0.0, -1.0]
     projected_gravity = world2self(base_quat,torch.tensor(gravity, device=device, dtype=torch.float32))
     base_lin_vel = world2self(base_quat,get_sensor_data("base_lin_vel"))
-    base_lin_vel[1] = 0
     base_ang_vel = get_sensor_data("base_ang_vel")
     dof_pos = torch.zeros(env_cfg["num_actions"], device=device, dtype=torch.float32)
     for i, dof_name in enumerate(env_cfg["dof_names"]):
@@ -69,6 +75,11 @@ def get_obs(env_cfg, obs_scales, actions, default_dof_pos, commands=[0.0, 0.0, 0
     print("base_ang_vel:", base_ang_vel)
     print("dof_vel:", dof_vel[4:6])
     print("commands:", commands)
+    obs_saver.add_tensor("base_lin_vel", base_lin_vel)
+    obs_saver.add_tensor("base_ang_vel", base_ang_vel)
+    obs_saver.add_tensor("projected_gravity", projected_gravity)
+    obs_saver.add_tensor("dof_vel", dof_vel)
+    obs_saver.add_tensor("dof_pos", dof_pos[0:4])
     return torch.cat(
         [
             base_lin_vel * obs_scales["lin_vel"],  # 3
@@ -129,6 +140,11 @@ def main():
         device=device,
         dtype=torch.float32)
     # from IPython import embed; embed()
+    # 从未上电姿态站立
+    set_joint_angle("left_thigh_joint", -0.35)
+    set_joint_angle("right_thigh_joint", -0.35)
+    for i in range(200):
+        mujoco.mj_step(m, d)
     # 启动 mujoco 渲染
     with mujoco.viewer.launch_passive(m, d) as viewer:
         while viewer.is_running():
@@ -145,7 +161,7 @@ def main():
             history_obs_buf[-1, :] = slice_obs_buf 
 
             # 更新动作
-            target_dof_pos = actions[0:4] * 0.07#env_cfg["joint_action_scale"] + default_dof_pos[0:4]
+            target_dof_pos = actions[0:4] * 0.05#env_cfg["joint_action_scale"] + default_dof_pos[0:4]
             target_dof_vel = actions[4:6] * 1.0#env_cfg["wheel_action_scale"]
             target_dof_pos = torch.clamp(target_dof_pos, dof_pos_lower[0:4],dof_pos_upper[0:4])
             # print("act:", act)
@@ -171,6 +187,8 @@ def main():
             time_until_next_step = m.opt.timestep*5 - (time.time() - step_start)
             if time_until_next_step > 0:
                 time.sleep(time_until_next_step)
+    print("close viewer")
+    obs_saver.save_all()
 
 if __name__ == "__main__":
     main()
