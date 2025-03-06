@@ -25,6 +25,7 @@ enum class com_type {
   SetCANID = 7,         // 设置电机ID
   SetFixParameter = 8, // 掉电不消失
   SetParameter = 18,   // 掉电消失
+  RequestParameter = 17,// 请求参数
 }; // 通讯类型
 
 // 通讯类型 SetParameter
@@ -152,6 +153,7 @@ public:
                              float parameter);
   MiCANMsg ok_fix_parameter(uint8_t motor_id);
 
+  MiCANMsg request_parameter(uint8_t motor_id, motor_indexs index);
   /*当前不可用 没写完*/
   //设置id 
   MiCANMsg set_can_id(uint8_t motor_id, uint8_t id);

@@ -34,6 +34,7 @@ public:
   float torque;
   float current;
   float temperature; // 摄氏度
+  
   MotorWarning warning = MotorWarning::Normal;
   void print() {
     std::cout << "Motor ID: " << id << std::endl;

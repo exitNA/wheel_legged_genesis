@@ -30,6 +30,8 @@ Motor MiMotor::decode(TPCANMsg msg)
     Motor motor;
     auto ext_id = mi_msg.get_ext_id();
     auto mi_back = ext_id->toMI_BACK();
+    if(ext_id->com_type == static_cast<uint32_t>(com_type::MotorCallBack))
+    {
     motor.id = mi_back->motor_id;
     motor.angle = ((float)(mi_msg.DATA[0] << 8 | mi_msg.DATA[1])-32767.5)/32767.5*4*M_PI;
     motor.ang_vel = ((float)(mi_msg.DATA[2] << 8 | mi_msg.DATA[3])-32767.5)/32767.5*30.0;
@@ -47,6 +49,11 @@ Motor MiMotor::decode(TPCANMsg msg)
         motor.warning = MotorWarning::HALLEncoding;
     else
         motor.warning = MotorWarning::Normal;
+    
+    }
+    else if(ext_id->com_type == static_cast<uint32_t>(com_type::RequestParameter)){
+        
+    }
     return motor;
 }
 
@@ -117,6 +124,21 @@ MiCANMsg MiMotor::ok_fix_parameter(uint8_t motor_id)
     msg.ID = ext_id.toEXTID();
     msg.MSGTYPE = PCAN_MESSAGE_EXTENDED;
     msg.LEN = 8;
+    return msg;
+}
+
+MiCANMsg MiMotor::request_parameter(uint8_t motor_id, motor_indexs index)
+{
+    MiCANMsg msg;
+    MI_EXT_ID ext_id;
+    ext_id.device_id = motor_id;
+    ext_id.data=0;
+    ext_id.com_type=static_cast<uint32_t>(com_type::RequestParameter);
+    msg.ID = ext_id.toEXTID();
+    msg.MSGTYPE = PCAN_MESSAGE_EXTENDED;
+    msg.LEN = 8;
+    uint16_t motor_index = static_cast<uint16_t>(index);
+    memcpy(msg.DATA, &motor_index, sizeof(uint16_t));
     return msg;
 }
 

@@ -8,7 +8,7 @@ int main(int argc, char **argv) {
   int motor_id = 0x05;
   pcan.send(CAN1, dm.enableMotor(motor_id, true));
 
-  auto loc = dm.locomotion(motor_id, 0.0, 12, 0.0, 20.0, 0.5);
+  auto loc = dm.locomotion(motor_id, 0.0, 0, 2.0, 0.0, 0.5);
   for (int i = 0; i < 50; i++) {
     auto [is_read, can_msg] = pcan.read(CAN1);
     if (is_read) {
