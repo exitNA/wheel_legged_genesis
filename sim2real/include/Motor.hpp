@@ -1,5 +1,6 @@
 #pragma once
 #include "magic_enum/magic_enum.hpp"
+#include <cstdint>
 #include <iostream>
 #include <string>
 
@@ -12,8 +13,12 @@
 
 enum class MotorWarning {
   Normal = 0,
-  HighTemperature,
+  OverTemperature,
   Overcurrent,
+  Undervoltage,
+  MagneticEncoding,
+  HALLEncoding,
+  
 };
 
 class Motor {
@@ -27,7 +32,7 @@ public:
   float temperature; // 摄氏度
   MotorWarning warning = MotorWarning::Normal;
   void print() {
-    std::cout << "ID: " << id << std::endl;
+    std::cout << "Motor ID: " << id << std::endl;
     std::cout << "Angle: " << angle << std::endl;
     std::cout << "Angular Velocity: " << ang_vel << std::endl;
     std::cout << "Torque: " << torque << std::endl;
@@ -40,4 +45,14 @@ public:
     }
     std::cout << "Motor: " << std::string(magic_enum::enum_name(warning))<<RESET << std::endl;
   }
+  Motor* invertMotor()
+  {
+    angle = -angle;
+    number_laps = -number_laps;
+    ang_vel = -ang_vel;
+    torque = -torque;
+    current = -current;
+    return this;
+  }
 };
+

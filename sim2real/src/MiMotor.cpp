@@ -6,11 +6,11 @@ MiMotor::MiMotor()
 MiMotor::~MiMotor()
 {}
 
-MiCANMsg MiMotor::enableMotor(uint32_t motor_id, bool enable, bool clear_fault)
+MiCANMsg MiMotor::enableMotor(uint8_t motor_id, bool enable, bool clear_fault)
 {
     MiCANMsg msg;
     MI_EXT_ID ext_id;
-    ext_id.motor_id = motor_id;
+    ext_id.device_id = motor_id;
     ext_id.data=0;
     if(enable)
         ext_id.com_type=static_cast<uint32_t>(com_type::Enable);
@@ -28,20 +28,33 @@ Motor MiMotor::decode(TPCANMsg msg)
 {
     MiCANMsg mi_msg(msg);
     Motor motor;
-    motor.id = mi_msg.ID;
+    auto ext_id = mi_msg.get_ext_id();
+    auto mi_back = ext_id->toMI_BACK();
+    motor.id = mi_back->motor_id;
     motor.angle = ((float)(mi_msg.DATA[0] << 8 | mi_msg.DATA[1])-32767.5)/32767.5*4*M_PI;
     motor.ang_vel = ((float)(mi_msg.DATA[2] << 8 | mi_msg.DATA[3])-32767.5)/32767.5*30.0;
     motor.torque = ((float)(mi_msg.DATA[4] << 8 | mi_msg.DATA[5])-32767.5)/32767.5*12.0;
     motor.temperature = (float)(mi_msg.DATA[4] << 8 | mi_msg.DATA[5])*10;
-    //TODO motorwarning
+    if(mi_back->undervoltage)
+        motor.warning = MotorWarning::Undervoltage;
+    else if(mi_back->overcurrent)
+        motor.warning = MotorWarning::Overcurrent;
+    else if(mi_back->overtemperature)
+        motor.warning = MotorWarning::OverTemperature;
+    else if(mi_back->magnetic_encoding)
+        motor.warning = MotorWarning::MagneticEncoding;
+    else if(mi_back->HALL_encoding)
+        motor.warning = MotorWarning::HALLEncoding;
+    else
+        motor.warning = MotorWarning::Normal;
     return motor;
 }
 
-MiCANMsg MiMotor::locomotion(uint32_t motor_id,  float torque, float MechPosition, float speed, float kp, float kd)
+MiCANMsg MiMotor::locomotion(uint8_t motor_id,  float torque, float MechPosition, float speed, float kp, float kd)
 {
     MiCANMsg msg;
     MI_EXT_ID ext_id;
-    ext_id.motor_id = motor_id;
+    ext_id.device_id = motor_id;
     ext_id.data=float_to_uint(torque,T_MIN,T_MAX,16);
     ext_id.com_type=static_cast<uint32_t>(com_type::Loc);
     msg.ID = ext_id.toEXTID();
@@ -58,11 +71,11 @@ MiCANMsg MiMotor::locomotion(uint32_t motor_id,  float torque, float MechPositio
     return msg;
 }
 
-MiCANMsg MiMotor::set_parameter(uint32_t motor_id, motor_indexs index,float parameter)
+MiCANMsg MiMotor::set_parameter(uint8_t motor_id, motor_indexs index,float parameter)
 {
     MiCANMsg msg;
     MI_EXT_ID ext_id;
-    ext_id.motor_id = motor_id;
+    ext_id.device_id = motor_id;
     ext_id.data=0;
     ext_id.com_type=static_cast<uint32_t>(com_type::SetParameter);
     msg.ID = ext_id.toEXTID();
@@ -76,11 +89,11 @@ MiCANMsg MiMotor::set_parameter(uint32_t motor_id, motor_indexs index,float para
     return msg;
 }
 
-MiCANMsg MiMotor::set_fix_parameter(uint32_t motor_id, fix_parameter_indexs index,float parameter)
+MiCANMsg MiMotor::set_fix_parameter(uint8_t motor_id, fix_parameter_indexs index,float parameter)
 {
     MiCANMsg msg;
     MI_EXT_ID ext_id;
-    ext_id.motor_id = motor_id;
+    ext_id.device_id = motor_id;
     ext_id.data=253;
     ext_id.com_type=static_cast<uint32_t>(com_type::SetFixParameter);
     msg.ID = ext_id.toEXTID();
@@ -94,11 +107,11 @@ MiCANMsg MiMotor::set_fix_parameter(uint32_t motor_id, fix_parameter_indexs inde
     return msg;
 }
 
-MiCANMsg MiMotor::ok_fix_parameter(uint32_t motor_id)
+MiCANMsg MiMotor::ok_fix_parameter(uint8_t motor_id)
 {
     MiCANMsg msg;
     MI_EXT_ID ext_id;
-    ext_id.motor_id = motor_id;
+    ext_id.device_id = motor_id;
     ext_id.data=765;
     ext_id.com_type=static_cast<uint32_t>(com_type::SetFixParameter);
     msg.ID = ext_id.toEXTID();
@@ -107,6 +120,31 @@ MiCANMsg MiMotor::ok_fix_parameter(uint32_t motor_id)
     return msg;
 }
 
+MiCANMsg MiMotor::set_can_id(uint8_t motor_id, uint8_t id)
+{
+    MiCANMsg msg;
+    MI_EXT_ID ext_id;
+    ext_id.device_id = motor_id;
+    ext_id.data=id<< 8;
+    ext_id.com_type=static_cast<uint32_t>(com_type::SetCANID);
+    msg.ID = ext_id.toEXTID();
+    msg.MSGTYPE = PCAN_MESSAGE_EXTENDED;
+    msg.LEN = 8;
+    return msg;
+}
+
+MiCANMsg MiMotor::set_zero_point(uint8_t motor_id)
+{
+    MiCANMsg msg;
+    MI_EXT_ID ext_id;
+    ext_id.device_id = motor_id;
+    ext_id.data=0;
+    ext_id.com_type=static_cast<uint32_t>(com_type::SetZero);
+    msg.ID = ext_id.toEXTID();
+    msg.MSGTYPE = PCAN_MESSAGE_EXTENDED;
+    msg.LEN = 8;
+    return msg;
+}
 
 int MiMotor::float_to_uint(float x, float x_min, float x_max, int bits) {
   float span = x_max - x_min;

@@ -21,9 +21,10 @@ enum class com_type {
   MotorCallBack = 2,
   Enable = 3,          // 使能
   Stop = 4,            // 停止
-  SetParameter = 18,   // 掉电消失
-  MotorID = 7,         // 设置电机ID
+  SetZero = 6,         // 设置电机零点
+  SetCANID = 7,         // 设置电机ID
   SetFixParameter = 8, // 掉电不消失
+  SetParameter = 18,   // 掉电消失
 }; // 通讯类型
 
 // 通讯类型 SetParameter
@@ -70,22 +71,49 @@ enum class fix_parameter_indexs {
   limit_cur = 0X2019,     // 位置、速度模式电流限制 23
 }; // 电机功能码
 
+//电机反馈解码
+struct MI_BACK
+{
+    uint16_t motor_id : 8;
+    uint16_t undervoltage  : 1;
+    uint16_t overcurrent : 1;
+    uint16_t overtemperature : 1;
+    uint16_t magnetic_encoding : 1;
+    uint16_t HALL_encoding : 1;
+    uint16_t not_calibrated : 1;
+    uint16_t mode_state : 2;
+};
+
+// 扩展ID
 struct MI_EXT_ID {
-  uint32_t motor_id : 8; // 只占8位
+  uint32_t device_id : 8;
   uint32_t data : 16;
   uint32_t com_type : 5;
   uint32_t res : 3;
   void print() {
-    std::cout << "  Device ID: " << motor_id << std::endl;
+    std::cout << "  Device ID: " << device_id << std::endl;
     std::cout << "  Data: " << data << std::endl;
     std::cout << "  ComType: " << com_type << std::endl;
   }
   DWORD toEXTID() {
-    return (com_type << 24) | (data << 8) | motor_id;
+    return (com_type << 24) | (data << 8) | device_id;
     ;
+  }
+  MI_BACK* toMI_BACK() {
+    static MI_BACK mi_back;
+    mi_back.motor_id = data & 0xFF;
+    mi_back.undervoltage = (data >> 8) & 0x01;
+    mi_back.overcurrent = (data >> 9) & 0x01;
+    mi_back.overtemperature = (data >> 10) & 0x01;
+    mi_back.magnetic_encoding = (data >> 11) & 0x01;
+    mi_back.HALL_encoding = (data >> 12) & 0x01;
+    mi_back.not_calibrated = (data >> 13) & 0x01;
+    mi_back.mode_state = (data >> 14) & 0x03;
+    return &mi_back;
   }
 };
 
+// CAN数据
 class MiCANMsg : public TPCANMsg {
 public:
   MiCANMsg() = default;
@@ -100,6 +128,9 @@ public:
     }
     std::cout << std::dec << std::endl;
   }
+  MI_EXT_ID* get_ext_id() {
+    return (struct MI_EXT_ID *)&this->ID;
+  } 
 };
 
 class MiMotor {
@@ -107,19 +138,24 @@ public:
   MiMotor();
   ~MiMotor();
 
-  MiCANMsg enableMotor(uint32_t motor_id, bool enable,
+  MiCANMsg enableMotor(uint8_t motor_id, bool enable,
                        bool clear_fault = false);
   Motor decode(TPCANMsg msg);
-
-  MiCANMsg set_parameter(uint32_t motor_id, motor_indexs index,
+  //一般控制也在这里 iq_ref/spd_ref/loc_ref
+  MiCANMsg set_parameter(uint8_t motor_id, motor_indexs index,
                          float parameter);
   // 运动控制
-  MiCANMsg locomotion(uint32_t motor_id, float torque, float MechPosition,
+  MiCANMsg locomotion(uint8_t motor_id, float torque, float MechPosition,
                       float speed, float kp, float kd);
   // 设置固定参数之后要确认参数，全部设置完之后确定就可以了
-  MiCANMsg set_fix_parameter(uint32_t motor_id, fix_parameter_indexs index,
+  MiCANMsg set_fix_parameter(uint8_t motor_id, fix_parameter_indexs index,
                              float parameter);
-  MiCANMsg ok_fix_parameter(uint32_t motor_id);
+  MiCANMsg ok_fix_parameter(uint8_t motor_id);
+
+  /*当前不可用 没写完*/
+  //设置id 
+  MiCANMsg set_can_id(uint8_t motor_id, uint8_t id);
+  MiCANMsg set_zero_point(uint8_t motor_id);
 
 private:
   int float_to_uint(float x, float x_min, float x_max, int bits);
