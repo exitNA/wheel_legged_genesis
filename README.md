@@ -113,4 +113,5 @@ When using AMD GPUs, it is recommended to select vulkan for the genesis backend
 - [x] Sim2Sim：mujoco  
 - [ ] left_hip and right_hip  
 技术交流：  
-![微信图片_20250227085635_7](https://github.com/user-attachments/assets/ee42ca44-872b-45e6-aee5-c56286662330)  
+![微信图片_20250306105454_9](https://github.com/user-attachments/assets/5a7a015d-f5b0-434d-a827-b9ecccf91842)  
+
