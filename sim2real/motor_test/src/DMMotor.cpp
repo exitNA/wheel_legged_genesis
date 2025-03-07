@@ -1,10 +1,8 @@
 #include "DMMotor.h"
-#include "Motor.hpp"
-#include <cmath>
 DMMotor::DMMotor() {}
 DMMotor::~DMMotor() {}
 
-DMCANMsg DMMotor::enableMotor(uint8_t motor_id, bool enable) {
+DMCANMsg* DMMotor::enableMotor(uint8_t motor_id, bool enable, bool clear_fault) {
   DMCANMsg dm_msg;
   dm_msg.ID = motor_id;
   dm_msg.MSGTYPE = PCAN_MESSAGE_STANDARD;
@@ -28,12 +26,14 @@ DMCANMsg DMMotor::enableMotor(uint8_t motor_id, bool enable) {
     dm_msg.DATA[6] = 0xFF;
     dm_msg.DATA[7] = 0xFD;
   }
-  return dm_msg;
+  if(clear_fault){}
+  dm_can_msg = dm_msg;
+  return &dm_can_msg;
 }
 
-Motor DMMotor::decode(TPCANMsg msg) {
+MotorBack DMMotor::decode(TPCANMsg msg) {
   DMCANMsg dm_msg(msg);
-  Motor motor;
+  MotorBack motor;
   // 解码
   float p_int = (dm_msg.DATA[1] << 8) | dm_msg.DATA[2];
   float v_int = (dm_msg.DATA[3] << 4) | (dm_msg.DATA[4] >> 4);
@@ -68,7 +68,7 @@ Motor DMMotor::decode(TPCANMsg msg) {
   return motor;
 }
 
-DMCANMsg DMMotor::locomotion(uint8_t motor_id, float torque, float pos,
+DMCANMsg* DMMotor::locomotion(uint8_t motor_id, float torque, float pos,
                              float ang_vel, float kp, float kd) {
   DMCANMsg dm_msg;
   dm_msg.ID = motor_id;
@@ -88,7 +88,9 @@ DMCANMsg DMMotor::locomotion(uint8_t motor_id, float torque, float pos,
   dm_msg.DATA[5] = (kd_tmp >> 4);
   dm_msg.DATA[6] = ((kd_tmp & 0xF) << 4) | (tor_tmp >> 8);
   dm_msg.DATA[7] = tor_tmp;
-  return dm_msg;
+
+  dm_can_msg = dm_msg;
+  return &dm_can_msg;
 }
 
 uint16_t DMMotor::float_to_uint(float x, float x_min, float x_max, int bits)

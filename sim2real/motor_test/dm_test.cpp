@@ -1,6 +1,6 @@
 #include "DMMotor.h"
 #include "PCAN.hpp"
-int main(int argc, char **argv) {
+int main() {
   PCAN pcan;
   auto channel = CAN2;
   if (!pcan.initPCAN(channel, BAUD_1MBPS))
@@ -8,9 +8,9 @@ int main(int argc, char **argv) {
   DMMotor dm;
   int motor_id = 0x05;
   
-  pcan.send(channel, dm.enableMotor(motor_id, true));
+  pcan.send(channel, *dm.enableMotor(motor_id, true));
 
-  auto loc = dm.locomotion(motor_id, 0.0, 0, 2.0, 0.0, 0.5);
+  auto loc = *dm.locomotion(motor_id, 0.0, 0, 2.0, 0.0, 0.5);
   for (int i = 0; i < 100; i++) {
     auto [is_read, can_msg] = pcan.read(channel);
     if (is_read) {
@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
     pcan.send(channel, loc);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
-  pcan.send(channel, dm.enableMotor(motor_id, false));
+  pcan.send(channel, *dm.enableMotor(motor_id, false));
 
   return 0;
 }

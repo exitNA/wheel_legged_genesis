@@ -8,6 +8,8 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/config.json" DESTINATION "${CMAKE_BINARY_DIR}")
+
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/magic_enum)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)

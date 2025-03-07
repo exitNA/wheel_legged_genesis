@@ -5,6 +5,7 @@
 #include <cstring>
 #include <iomanip>
 #include <iostream>
+#include <cmath>
 
 #define DM_P_MIN -12.5
 #define DM_P_MAX 12.5
@@ -34,18 +35,19 @@ public:
   }
 };
 
-class DMMotor {
+class DMMotor : public Motor {
 public:
   DMMotor();
   ~DMMotor();
 
-  DMCANMsg enableMotor(uint8_t motor_id, bool enable);
-  Motor decode(TPCANMsg msg);
+  DMCANMsg *enableMotor(uint8_t motor_id, bool enable, bool clear_fault = false) override;
+  MotorBack decode(TPCANMsg msg) override;
   // 运动控制
-  DMCANMsg locomotion(uint8_t motor_id, float torque, float pos,
-                      float ang_vel, float kp, float kd);
+  DMCANMsg *locomotion(uint8_t motor_id, float torque, float pos, float ang_vel,
+                       float kp, float kd) override;
 
 private:
   uint16_t float_to_uint(float x, float x_min, float x_max, int bits);
   float uint_to_float(int x_int, float x_min, float x_max, int bits);
+  DMCANMsg dm_can_msg;
 };

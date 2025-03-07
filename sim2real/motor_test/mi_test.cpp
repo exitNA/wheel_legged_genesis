@@ -1,6 +1,6 @@
 #include "PCAN.hpp"
 #include "MiMotor.h"
-int main(int argc, char **argv) {
+int main() {
   PCAN pcan;
   auto channel = CAN1;
   if (!pcan.initPCAN(channel, BAUD_1MBPS))
@@ -10,10 +10,10 @@ int main(int argc, char **argv) {
   int motor_id = 10;
   // pcan.send(channel, mi.set_can_id(15, motor_id));
 
-  TPCANMsg motor_enable = mi.enableMotor(motor_id, true);
+  TPCANMsg motor_enable = *mi.enableMotor(motor_id, true);
   pcan.send(channel, motor_enable);
 
-  auto loc = mi.locomotion(motor_id, 0.0, 0.0, 1.0, 0.0, 0.1);
+  auto loc = *mi.locomotion(motor_id, 0.0, 0.0, 1.0, 0.0, 0.1);
   pcan.send(channel, loc);
 
   //   TPCANMsg send_msg = mi.set_parameter(motor_id, motor_indexs::spd_ref, 5.2);
@@ -35,6 +35,6 @@ int main(int argc, char **argv) {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
   
-  pcan.send(channel, mi.enableMotor(motor_id, false));
+  pcan.send(channel, *mi.enableMotor(motor_id, false));
   return 0;
 }
