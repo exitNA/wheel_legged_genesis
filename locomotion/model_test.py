@@ -5,7 +5,7 @@ import cv2
 import math
 import torch
 from genesis.engine.solvers.rigid.rigid_solver_decomp import RigidSolver
-gs.init(backend=gs.vulkan)
+gs.init(backend=gs.cuda)
 
 scene = gs.Scene(
     show_viewer = True,
@@ -33,7 +33,8 @@ plane = scene.add_entity(
 
 robot = scene.add_entity(
     gs.morphs.URDF(file="assets/urdf/nz/urdf/nz.urdf",
-    pos=(0.0, 0.0, 0.15)
+    pos=(0.0, 0.0, 0.5),
+    quat=(0.996195, 0, 0.0871557, 0)
     ),
     # gs.morphs.MJCF(file="assets/mjcf/urdf2nz/urdf2nz.xml",
     # pos=(0.0, 0.0, 0.15)
@@ -94,6 +95,7 @@ print(link.idx)
 link = robot.get_link("right_wheel_link")
 print(link.idx)
 
+
 # 渲染rgb、深度、分割掩码和法线图
 # rgb, depth, segmentation, normal = cam.render(rgb=True, depth=True, segmentation=True, normal=True)
 
@@ -107,10 +109,10 @@ while True:
         force=force,
         links_idx=[1,],
     )
-    # robot.control_dofs_position(
-    #         np.array([-0.5, 0.0, -0.5, 0.0, 0.0, 0.0]),
-    #         dofs_idx,
-    #     )
+    robot.control_dofs_position(
+            np.array([0.6, 0.0, 0.6, 0.0, 0.0, 0.0]),
+            dofs_idx,
+        )
     scene.step()
     # print(robot.get_pos())
     # left_knee_pos = left_knee.get_pos()
@@ -118,6 +120,6 @@ while True:
     # force = robot.get_links_net_contact_force()
     # dof_vel = robot.get_dofs_velocity()
     # print("dof_pos:",robot.get_dofs_position(dofs_idx))
-    # time.sleep(0.1)
+    time.sleep(0.1)
     cam.render()
 # cam.stop_recording(save_to_filename='video.mp4', fps=60)

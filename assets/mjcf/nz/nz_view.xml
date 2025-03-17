@@ -141,7 +141,7 @@
           class="visual" />
 
         <!-- 大腿 -->
-        <body name="left_thigh" pos="-0.1737 0.0345 0" euler="0 1.047198 0">
+        <body name="left_thigh" pos="-0.1737 0.0345 0" euler="0 0.436332313 0">
           <joint name="left_thigh_joint" type="hinge" axis="0 1 0"  damping="4.5" armature="0.0" stiffness="0.0"/>
           <geom type="mesh" mesh="LeftThighBase" material="fiberglass" mass="0.111" class="collision" />
           <geom type="mesh" mesh="LeftThighBearing" material="metal" mass="0.13" class="collision" />
@@ -161,7 +161,7 @@
           </body> -->
 
           <!-- 小腿 -->
-          <body name="left_calf" pos="-0.0015 0.019 -0.17999" euler="0 -1.5707963267948966192313216 0">
+          <body name="left_calf" pos="-0.0015 0.019 -0.17999" euler="0 -1.483529864 0">
             <joint name="left_calf_joint" type="hinge" axis="0 1 0" damping="4.5" armature="0.0" stiffness="0.0"/>
             <geom type="mesh" mesh="LeftCalfBase" material="fiberglass" mass="0.183"
               class="collision" />
@@ -216,7 +216,7 @@
           class="visual" />
 
         <!-- 大腿 -->
-        <body name="right_thigh" pos="-0.1737 -0.0343 0" euler="0 1.047198 0">
+        <body name="right_thigh" pos="-0.1737 -0.0343 0" euler="0 0.436332313 0">
           <joint name="right_thigh_joint" type="hinge" axis="0 1 0"  damping="4.5" armature="0.0" stiffness="0.0"/>
           <geom type="mesh" mesh="RightThighBase" material="fiberglass" mass="0.111" class="collision" />
           <geom type="mesh" mesh="RightThighBearing" material="metal" mass="0.13" class="collision" />
@@ -235,7 +235,7 @@
           </body> -->
 
           <!-- 小腿 -->
-          <body name="right_calf" pos="-0.00248 -0.019 -0.17998" euler="0 -1.5707963267948966192313216 0">
+          <body name="right_calf" pos="-0.00248 -0.019 -0.17998" euler="0 -1.483529864 0">
             <joint name="right_calf_joint" type="hinge" axis="0 1 0"  damping="4.5" armature="0.0" stiffness="0.0"/>
             <geom type="mesh" mesh="RightCalfBase" mass="0.183" material="fiberglass"
               class="collision" />
@@ -286,11 +286,11 @@
 
   <actuator>
     <!-- <position joint="left_hip_joint" name="left_hip_joint" kp="80" kv="2" ctrlrange="-0.31416 0.31416"/> -->
-    <position joint="left_thigh_joint" name="left_thigh_joint" kp="30" kv="1.3" ctrlrange="-1.0472 0.5236" forcerange="-40 40"/>
-    <position joint="left_calf_joint" name="left_calf_joint" kp="30" kv="1.3" ctrlrange="0 1.3963" forcerange="-40 40"/>
+    <position joint="left_thigh_joint" name="left_thigh_joint" kp="30" kv="1.3" ctrlrange="-0.436332313 1.134464014" forcerange="-40 40"/>
+    <position joint="left_calf_joint" name="left_calf_joint" kp="30" kv="1.3" ctrlrange="0 1.3" forcerange="-40 40"/>
     <!-- <position joint="right_hip_joint" name="right_hip_joint" kp="30" kv="1.2" ctrlrange="-0.31416 0.31416"/> -->
-    <position joint="right_thigh_joint" name="right_thigh_joint" kp="30" kv="1.3" ctrlrange="-1.0472 0.5236" forcerange="-40 40"/>
-    <position joint="right_calf_joint" name="right_calf_joint" kp="30" kv="1.3" ctrlrange="0 1.3963" forcerange="-40 40"/>
+    <position joint="right_thigh_joint" name="right_thigh_joint" kp="30" kv="1.3" ctrlrange="-0.436332313 1.134464014" forcerange="-40 40"/>
+    <position joint="right_calf_joint" name="right_calf_joint" kp="30" kv="1.3" ctrlrange="0 1.3" forcerange="-40 40"/>
     <intvelocity joint="left_wheel_joint" name="left_wheel_joint" kp="30" kv="1.3"  forcerange="-500 500" actrange="-300 300"/>
     <intvelocity joint="right_wheel_joint" name="right_wheel_joint" kp="30" kv="1.3"  forcerange="-500 500" actrange="-300 300"/>
   </actuator>

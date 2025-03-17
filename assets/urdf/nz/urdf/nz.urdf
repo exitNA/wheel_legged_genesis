@@ -8,7 +8,7 @@
     name="base_link">
     <inertial>
       <origin
-        xyz="0.077211 0.0036541 0.068473"
+        xyz="0.0772110115185622 0.00365409160309633 0.0684731367019287"
         rpy="0 0 0" />
       <mass
         value="4.1216284" />
@@ -31,7 +31,7 @@
       <material
         name="">
         <color
-          rgba="0.79216 0.81961 0.93333 1" />
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
       </material>
     </visual>
     <collision>
@@ -48,17 +48,17 @@
     name="left_hip_link">
     <inertial>
       <origin
-        xyz="-0.12991 -0.017819 7.599E-05"
+        xyz="-0.129913458293491 -0.0178191935412482 7.59898297969542E-05"
         rpy="0 0 0" />
       <mass
-        value="3.3424287" />
+        value="3.3489287" />
       <inertia
-        ixx="0.0041202"
+        ixx="0.0041290"
         ixy="0.0008675"
-        ixz="0.0000105"
-        iyy="0.0161322"
+        ixz="0.0000319"
+        iyy="0.0161996"
         iyz="0.0000029"
-        izz="0.0158443" />
+        izz="0.0159030" />
     </inertial>
     <visual>
       <origin
@@ -71,7 +71,7 @@
       <material
         name="">
         <color
-          rgba="0.79216 0.81961 0.93333 1" />
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
       </material>
     </visual>
     <collision>
@@ -88,14 +88,14 @@
     name="left_hip_joint"
     type="fixed">
     <origin
-      xyz="0.151248020480631 0.103301979532171 0.0740000350635592"
-      rpy="-0.000730179484732082 0 0" />
+      xyz="0.15125 0.1033 0.074"
+      rpy="-0.00073018 0 0" />
     <parent
       link="base_link" />
     <child
       link="left_hip_link" />
     <axis
-      xyz="1 0 0" />
+      xyz="0 0 0" />
     <limit
       lower="-0.31416"
       upper="0.31416"
@@ -106,17 +106,17 @@
     name="left_thigh_link">
     <inertial>
       <origin
-        xyz="-0.087416 0.0096982 -0.040304"
+        xyz="-0.0488434597921626 0.00969818146991977 -0.0820338494792314"
         rpy="0 0 0" />
       <mass
-        value="0.4141741" />
+        value="0.43777" />
       <inertia
-        ixx="0.0006274"
-        ixy="0.0000174"
-        ixz="-0.0006890"
-        iyy="0.0018822"
-        iyz="-0.0000091"
-        izz="0.0012764" />
+        ixx="0.0017974"
+        ixy="0.0000493"
+        ixz="-0.0006903"
+        iyy="0.0022850"
+        iyz="0.0000485"
+        izz="0.0005382" />
     </inertial>
     <visual>
       <origin
@@ -129,7 +129,7 @@
       <material
         name="">
         <color
-          rgba="0.79216 0.81961 0.93333 1" />
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
       </material>
     </visual>
     <collision>
@@ -164,17 +164,17 @@
     name="left_calf_link">
     <inertial>
       <origin
-        xyz="0.16974 0.0023241 -0.045475"
+        xyz="0.16973424946336 0.00232413112260152 0.0454857130793686"
         rpy="0 0 0" />
       <mass
-        value="0.6553" />
+        value="0.8053" />
       <inertia
-        ixx="0.0010011"
-        ixy="0.0015777"
-        ixz="0.0004362"
-        iyy="0.0086862"
-        iyz="0.0001080"
-        izz="0.0088536" />
+        ixx="0.0028731"
+        ixy="0.0013546"
+        ixz="-0.0032254"
+        iyy="0.0089127"
+        iyz="0.0009997"
+        izz="0.0074584" />
     </inertial>
     <visual>
       <origin
@@ -187,7 +187,7 @@
       <material
         name="">
         <color
-          rgba="0.79216 0.81961 0.93333 1" />
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
       </material>
     </visual>
     <collision>
@@ -204,7 +204,7 @@
     name="left_calf_joint"
     type="continuous">
     <origin
-      xyz="-0.15513 0.018 -0.091296"
+      xyz="-0.074709 0.018 -0.16376"
       rpy="0 0 0" />
     <parent
       link="left_thigh_link" />
@@ -213,8 +213,8 @@
     <axis
       xyz="0 1 0" />
     <limit
-      lower="0"
-      upper="1.3963"
+      lower="-1.3963"
+      upper="0"
       effort="40"
       velocity="0" />
   </joint>
@@ -222,7 +222,7 @@
     name="left_wheel_link">
     <inertial>
       <origin
-        xyz="-2.9526E-11 0.0135 1.4772E-11"
+        xyz="-2.95235502711932E-11 0.0134999704617854 1.47686862739249E-11"
         rpy="0 0 0" />
       <mass
         value="0.75" />
@@ -231,7 +231,7 @@
         ixy="0"
         ixz="0"
         iyy="0.0028141"
-        iyz="-0.0000009"
+        iyz="0"
         izz="0.0015176" />
     </inertial>
     <visual>
@@ -245,7 +245,7 @@
       <material
         name="">
         <color
-          rgba="0.37647 0.37647 0.37647 1" />
+          rgba="0.376470588235294 0.376470588235294 0.376470588235294 1" />
       </material>
     </visual>
     <collision>
@@ -262,7 +262,7 @@
     name="left_wheel_joint"
     type="continuous">
     <origin
-      xyz="0.20864 0.027 -0.055905"
+      xyz="0.20864 0.027 0.055905"
       rpy="0 0 0" />
     <parent
       link="left_calf_link" />
@@ -278,7 +278,7 @@
     name="left_knee_link">
     <inertial>
       <origin
-        xyz="5.4459E-05 1.1771E-05 -5.6171E-06"
+        xyz="5.44590350487484E-05 1.17713143685805E-05 -5.61706548485308E-06"
         rpy="0 0 0" />
       <mass
         value="0.09" />
@@ -318,7 +318,7 @@
     name="left_knee_wheel_joint"
     type="continuous">
     <origin
-      xyz="-0.048296 0.02265 0.012941"
+      xyz="-0.048296 0.02265 -0.012941"
       rpy="0 0 0" />
     <parent
       link="left_calf_link" />
@@ -336,17 +336,17 @@
     name="right_hip_link">
     <inertial>
       <origin
-        xyz="-0.12914 0.017674 0.001052"
+        xyz="-0.12914218220028 0.0176739637017305 0.00105196820752493"
         rpy="0 0 0" />
       <mass
-        value="3.3276491" />
+        value="3.3496969" />
       <inertia
-        ixx="0.0041031"
-        ixy="-0.0007818"
-        ixz="0.0000282"
-        iyy="0.0161875"
-        iyz="0.0000517"
-        izz="0.0158721" />
+        ixx="0.0041552"
+        ixy="-0.0008223"
+        ixz="0.0000276"
+        iyy="0.0162365"
+        iyz="-0.0000519"
+        izz="0.0159605" />
     </inertial>
     <visual>
       <origin
@@ -359,7 +359,7 @@
       <material
         name="">
         <color
-          rgba="0.79608 0.82353 0.93725 1" />
+          rgba="0.796078431372549 0.823529411764706 0.937254901960784 1" />
       </material>
     </visual>
     <collision>
@@ -383,7 +383,7 @@
     <child
       link="right_hip_link" />
     <axis
-      xyz="1 0 0" />
+      xyz="0 0 0" />
     <limit
       lower="0.31416"
       upper="-0.31416"
@@ -394,17 +394,17 @@
     name="right_thigh_link">
     <inertial>
       <origin
-        xyz="-0.090239 -0.0063515 -0.041235"
+        xyz="-0.0506448629787332 -0.00635154610052269 -0.0843417759624508"
         rpy="0 0 0" />
       <mass
-        value="0.2639971" />
+        value="0.43777" />
       <inertia
-        ixx="0.0002827"
-        ixy="-0.0000277"
-        ixz="-0.0003428"
-        iyy="0.0011020"
-        iyz="0.0000071"
-        izz="0.0008333" />
+        ixx="0.0017973"
+        ixy="-0.0000497"
+        ixz="-0.0006902"
+        iyy="0.0022849"
+        iyz="-0.0000512"
+        izz="0.0005382" />
     </inertial>
     <visual>
       <origin
@@ -417,7 +417,7 @@
       <material
         name="">
         <color
-          rgba="0.79216 0.81961 0.93333 1" />
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
       </material>
     </visual>
     <collision>
@@ -452,17 +452,17 @@
     name="right_calf_link">
     <inertial>
       <origin
-        xyz="0.16973 -0.0023235 -0.045486"
+        xyz="0.169737034100335 -0.00232413115555213 0.0454753206356527"
         rpy="0 0 0" />
       <mass
-        value="0.6553" />
+        value="0.8053" />
       <inertia
-        ixx="0.0025854"
-        ixy="-0.0013098"
-        ixz="0.0031826"
-        iyy="0.0086873"
-        iyz="0.0008810"
-        izz="0.0072681" />
+        ixx="0.0012274"
+        ixy="-0.0016758"
+        ixz="-0.0003727"
+        iyy="0.0089116"
+        iyz="0.0001884"
+        izz="0.0091053" />
     </inertial>
     <visual>
       <origin
@@ -475,7 +475,7 @@
       <material
         name="">
         <color
-          rgba="0.79216 0.81961 0.93333 1" />
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
       </material>
     </visual>
     <collision>
@@ -492,7 +492,7 @@
     name="right_calf_joint"
     type="continuous">
     <origin
-      xyz="-0.15513 -0.018001 -0.091296"
+      xyz="-0.074709 -0.018 -0.16376"
       rpy="0 0 0" />
     <parent
       link="right_thigh_link" />
@@ -501,8 +501,8 @@
     <axis
       xyz="0 1 0" />
     <limit
-      lower="0"
-      upper="1.3963"
+      lower="-1.3963"
+      upper="0"
       effort="40"
       velocity="0" />
   </joint>
@@ -510,7 +510,7 @@
     name="right_knee_link">
     <inertial>
       <origin
-        xyz="-2.2425E-05 1.2382E-05 5.0075E-05"
+        xyz="-2.24251046984092E-05 1.17685271968926E-05 4.9933180993611E-05"
         rpy="0 0 0" />
       <mass
         value="0.09" />
@@ -519,7 +519,7 @@
         ixy="-0.0000001"
         ixz="-0.0000001"
         iyy="0.0000436"
-        iyz="0.0000001"
+        iyz="0"
         izz="0.0000267" />
     </inertial>
     <visual>
@@ -550,7 +550,7 @@
     name="right_knee_wheel_joint"
     type="continuous">
     <origin
-      xyz="-0.0482962913144536 -0.0226499999999995 0.0129409522551254"
+      xyz="-0.048296 -0.02265 -0.012941"
       rpy="0 0 0" />
     <parent
       link="right_calf_link" />
@@ -563,7 +563,7 @@
     name="right_wheel_link">
     <inertial>
       <origin
-        xyz="3.3014E-11 -0.0135 -2.9346E-13"
+        xyz="3.30144800386734E-11 -0.01349997046178 -2.88005730375573E-13"
         rpy="0 0 0" />
       <mass
         value="0.75" />
@@ -572,7 +572,7 @@
         ixy="0"
         ixz="0"
         iyy="0.0028141"
-        iyz="-0.0000009"
+        iyz="0"
         izz="0.0015176" />
     </inertial>
     <visual>
@@ -586,7 +586,7 @@
       <material
         name="">
         <color
-          rgba="0.37647 0.37647 0.37647 1" />
+          rgba="0.376470588235294 0.376470588235294 0.376470588235294 1" />
       </material>
     </visual>
     <collision>
@@ -603,7 +603,7 @@
     name="right_wheel_joint"
     type="continuous">
     <origin
-      xyz="0.20864 -0.026999 -0.055905"
+      xyz="0.20864 -0.027 0.055905"
       rpy="0 0 0" />
     <parent
       link="right_calf_link" />

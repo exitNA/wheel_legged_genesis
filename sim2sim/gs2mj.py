@@ -79,7 +79,7 @@ def get_obs(env_cfg, obs_scales, actions, default_dof_pos, commands=[0.0, 0.0, 0
     obs_saver.add_tensor("dof_pos", dof_pos[0:4])
     return torch.cat(
         [
-            base_lin_vel * obs_scales["lin_vel"],  # 3
+            # base_lin_vel * obs_scales["lin_vel"],  # 3
             base_ang_vel * obs_scales["ang_vel"],  # 3
             projected_gravity,  # 3
             cmds * commands_scale,  # 4
@@ -139,10 +139,10 @@ def main():
 
     # from IPython import embed; embed()
     # 从未上电姿态站立
-    set_joint_angle("left_thigh_joint", -0.35)
-    set_joint_angle("right_thigh_joint", -0.35)
-    for i in range(200):
-        mujoco.mj_step(m, d)
+    # set_joint_angle("left_thigh_joint", -0.35)
+    # set_joint_angle("right_thigh_joint", -0.35)
+    # for i in range(200):
+    #     mujoco.mj_step(m, d)
     # 启动 mujoco 渲染
     with mujoco.viewer.launch_passive(m, d) as viewer:
         while viewer.is_running():

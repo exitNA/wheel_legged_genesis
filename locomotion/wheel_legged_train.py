@@ -70,6 +70,16 @@ def get_cfgs():
             "left_wheel_joint": 0.0,
             "right_wheel_joint": 0.0,
         },
+        "joint_init_angles": {  # [rad]
+            # "left_hip_joint":0.0,
+            "left_thigh_joint": 0.6,
+            "left_calf_joint": 0.0,
+            # "right_hip_joint":0.0,
+            "right_thigh_joint": 0.6,
+            "right_calf_joint": 0.0,
+            "left_wheel_joint": 0.0,
+            "right_wheel_joint": 0.0,
+        },
         "dof_names": [
             # "left_hip_joint",
             "left_thigh_joint",
@@ -83,11 +93,11 @@ def get_cfgs():
         # lower upper
         "dof_limit": {
             # "left_hip_joint":[-0.31416, 0.31416],
-            "left_thigh_joint": [-1.0472, 0.5236],
-            "left_calf_joint": [0, 1.3963],   #[0.0, 1.3963]
+            "left_thigh_joint": [-0.436332313, 1.221730476],
+            "left_calf_joint": [0, 1.3],   #[0.0, 1.3963]
             # "right_hip_joint":[-0.31416, 0.31416],
-            "right_thigh_joint": [-1.0472, 0.5236],
-            "right_calf_joint": [0, 1.3963],
+            "right_thigh_joint": [-0.436332313, 1.221730476],
+            "right_calf_joint": [0, 1.3],
             "left_wheel_joint": [0.0, 0.0],
             "right_wheel_joint": [0.0, 0.0],
         },
@@ -130,7 +140,7 @@ def get_cfgs():
             "urdf":[0.0, 0.0, 0.22],#稍微高一点点
             "mjcf":[0.0, 0.0, 0.285],
             },
-        "base_init_quat": [1.0, 0.0, 0.0, 0.0],
+        "base_init_quat": [1.0, 0.0, 0.0, 0.0],#0.996195, 0, 0.0871557, 0
         "episode_length_s": 15.0,
         "resampling_time_s": 5.0,
         "joint_action_scale": 0.5,
@@ -140,8 +150,8 @@ def get_cfgs():
     }
     obs_cfg = {
         # num_obs = num_slice_obs + history_num * num_slice_obs
-        "num_obs": 174, #在rsl-rl中使用的变量为num_obs表示state数量
-        "num_slice_obs": 29,
+        "num_obs": 156, #在rsl-rl中使用的变量为num_obs表示state数量
+        "num_slice_obs": 26,
         "history_length": 5,
         "obs_scales": {
             "lin_vel": 2.0,
@@ -179,7 +189,7 @@ def get_cfgs():
     }
     command_cfg = {
         "num_commands": 4,
-        "base_range": 1.0,  #基础范围
+        "base_range": 0.3,  #基础范围
         "lin_vel_x_range": [-2.0, 2.0], #修改范围要调整奖励权重
         "lin_vel_y_range": [-0.0, 0.0],
         "ang_vel_range": [-6.28, 6.28],   #修改范围要调整奖励权重
@@ -198,13 +208,13 @@ def get_cfgs():
     #域随机化 friction_ratio是范围波动 mass和com是偏移波动
     domain_rand_cfg = { 
         "friction_ratio_range":[0.8 , 1.2],
-        "random_base_mass_shift_range":[-1 , 1], #质量偏移量
+        "random_base_mass_shift_range":[-2 , 2], #质量偏移量
         "random_other_mass_shift_range":[-0.1, 0.1],  #质量偏移量
         "random_base_com_shift":0.05, #位置偏移量 xyz
         "random_other_com_shift":0.01, #位置偏移量 xyz
         "random_KP":[0.9, 1.1], #比例
         "random_KD":[0.9, 1.1], #比例
-        "random_default_joint_angles":[-0.05,0.05], #rad
+        "random_default_joint_angles":[-0.1,0.1], #rad
         "dof_damping_range":[0.8 , 1.2], #比例
         "dof_stiffness_range":[0.8 , 1.2], #比例 
         "dof_armature_range":[0.8 , 1.2], #比例 额外惯性 类似电机减速器惯性

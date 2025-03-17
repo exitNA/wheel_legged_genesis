@@ -247,8 +247,11 @@ class WheelLeggedEnv:
             device=self.device,
             dtype=gs.tc_float,
         )
+        
         default_dof_pos_list = [[self.env_cfg["default_joint_angles"][name] for name in self.env_cfg["dof_names"]]] * self.num_envs
         self.default_dof_pos = torch.tensor(default_dof_pos_list,device=self.device,dtype=gs.tc_float,)
+        init_dof_pos_list = [[self.env_cfg["joint_init_angles"][name] for name in self.env_cfg["dof_names"]]] * self.num_envs
+        self.init_dof_pos = torch.tensor(init_dof_pos_list,device=self.device,dtype=gs.tc_float,)
         #膝关节
         self.left_knee = self.robot.get_joint("left_calf_joint")
         self.right_knee = self.robot.get_joint("right_calf_joint")
@@ -290,6 +293,16 @@ class WheelLeggedEnv:
             if not isinstance(solver, RigidSolver):
                 continue
             rigid_solver = solver
+        
+        print("self.init_dof_pos",self.init_dof_pos)
+        #初始化角度
+        self.dof_pos[:] = self.init_dof_pos[:]
+        self.dof_vel[:] = 0.0
+        self.robot.set_dofs_position(
+            position=self.dof_pos[:],
+            dofs_idx_local=self.motor_dofs,
+            zero_velocity=True,
+        )
         
     def _resample_commands(self, envs_idx):
         for idx in envs_idx:
@@ -385,7 +398,7 @@ class WheelLeggedEnv:
         # compute observations
         self.slice_obs_buf = torch.cat(
             [
-                self.base_lin_vel * self.obs_scales["lin_vel"],  # 3
+                # self.base_lin_vel * self.obs_scales["lin_vel"],  # 3
                 self.base_ang_vel * self.obs_scales["ang_vel"],  # 3
                 self.projected_gravity,  # 3
                 self.commands * self.commands_scale,  # 4
@@ -420,7 +433,7 @@ class WheelLeggedEnv:
             return
         # print("\033[31m Reset Reset Reset Reset Reset Reset\033[0m")
         # reset dofs
-        self.dof_pos[envs_idx] = self.default_dof_pos[envs_idx]
+        self.dof_pos[envs_idx] = self.init_dof_pos[envs_idx]
         self.dof_vel[envs_idx] = 0.0
         self.robot.set_dofs_position(
             position=self.dof_pos[envs_idx],
