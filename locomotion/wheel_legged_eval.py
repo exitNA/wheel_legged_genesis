@@ -2,6 +2,7 @@ import argparse
 import os
 import pickle
 
+from loguru import logger
 import torch
 from wheel_legged_env import WheelLeggedEnv
 from rsl_rl.runners import OnPolicyRunner
@@ -22,8 +23,9 @@ def main():
     args = parser.parse_args()
     
 
-    gs.init(backend=gs.gpu,logging_level="warning")
-    gs.device="cuda:0"
+    device = 'cuda:0'
+    gs.init(backend=gs.gpu,logging_level="info")
+    gs.device=device
     log_dir = f"logs/{args.exp_name}"
     env_cfg, obs_cfg, reward_cfg, command_cfg, curriculum_cfg, domain_rand_cfg, terrain_cfg, train_cfg = pickle.load(open(f"logs/{args.exp_name}/cfgs.pkl", "rb"))
     # env_cfg["simulate_action_latency"] = False
@@ -44,23 +46,23 @@ def main():
         show_viewer=True,
         train_mode=False
     )
-    print(reward_cfg)
-    runner = OnPolicyRunner(env, train_cfg, log_dir, device="cuda:0")
+    logger.info('{}', reward_cfg)
+    runner = OnPolicyRunner(env, train_cfg, log_dir, device=device)
     resume_path = os.path.join(log_dir, f"model_{args.ckpt}.pt")
     runner.load(resume_path)
-    policy = runner.get_inference_policy(device="cuda:0")
+    policy = runner.get_inference_policy(device=device)
     #jit
     model = copy.deepcopy(runner.alg.actor_critic.actor).to('cpu')
     torch.jit.script(model).save(log_dir+"/policy.pt")
     # 加载模型进行测试
-    print("\n--- 模型加载测试 ---")
+    logger.info("模型加载测试")
     try:
         loaded_policy = torch.jit.load(log_dir + "/policy.pt")
         loaded_policy.eval() # 设置为评估模式
         loaded_policy.to('cuda')
-        print("模型加载成功!")
+        logger.info("模型加载成功!")
     except Exception as e:
-        print(f"模型加载失败: {e}")
+        logger.error("模型加载失败: {}", repr(e))
         exit()
     obs, _ = env.reset()
     pad = gamepad.control_gamepad(command_cfg,[1.0,1.0,3.14,0.005])
